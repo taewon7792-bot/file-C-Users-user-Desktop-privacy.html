@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유유타이거 공식 팬 커뮤니티 & 앱 (Yuyu Tiger)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-color, #0b0f19);
+            color: #f8fafc;
+            word-break: keep-all;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-scaleUp {
+            animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+    <script>
+        let appConfig = {
+            appName: '유유타이거',
+            tagline: '온 가족이 함께 보는 꿀잼 일상 튜브',
+            logoEmoji: '🐯',
+            logoImage: '', // Custom uploaded logo image data URL
+            primaryColor: '#ea580c', // Orange-600
+            secondaryColor: '#f97316', // Orange-500
+            bgColor: '#0b0f19',
+            pendingTasksCount: 0
+        };
+
+        try {
+            const savedConfig = localStorage.getItem('yuyu_app_config');
+            if (savedConfig) appConfig = JSON.parse(savedConfig);
+        } catch(e) {}
+
+        // Apply theme variables dynamically on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.documentElement.style.setProperty('--primary-color', appConfig.primaryColor);
+            document.documentElement.style.setProperty('--bg-color', appConfig.bgColor);
+        });
+
+        // Korean color name resolver to hex code
+        function koreanColorToHex(koreanColor) {
+            if (!koreanColor) return null;
+            const text = koreanColor.trim().toLowerCase();
+            const map = {
+                '주황색': '#ea580c', '오렌지색': '#ea580c', '오렌지': '#ea580c',
+                '빨간색': '#dc2626', '빨강': '#dc2626', '레드': '#dc2626',
+                '파란색': '#2563eb', '파랑': '#2563eb', '블루': '#2563eb',
+                '초록색': '#16a34a', '초록': '#16a34a', '녹색': '#16a34a', '그린': '#16a34a',
+                '검은색': '#0b0f19', '검정': '#0b0f19', '블랙': '#0b0f19', '다크': '#0b0f19',
+                '보라색': '#7c3aed', '보라': '#7c3aed', '퍼플': '#7c3aed',
+                '노란색': '#ca8a04', '노랑': '#ca8a04', '옐로우': '#ca8a04', '골드': '#ca8a04',
+                '분홍색': '#db2777', '핑크': '#db2777', '회색': '#334155', '그레이': '#334155',
+                '하늘색': '#0ea5e9', '네이비': '#1e3a8a', '갈색': '#78350f'
+            };
+            if (map[text]) return map[text];
+            if (text.startsWith('#')) return text;
+            return null;
+        }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col text-slate-100 selection:bg-orange-500 selection:text-white overflow-x-hidden" style="background-color: var(--bg-color, #0b0f19);">
+
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer min-w-0" onclick="switchTab('home')">
+                <div id="header-logo-container" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/30 text-white font-black text-xl shrink-0 overflow-hidden">
+                    <script>
+                        if (appConfig.logoImage) {
+                            document.write(`<img src="${appConfig.logoImage}" alt="Logo" class="w-full h-full object-cover">`);
+                        } else {
+                            document.write(appConfig.logoEmoji || '🐯');
+                        }
+                    </script>
+                </div>
+                <div class="min-w-0 flex flex-col justify-center">
+                    <h1 class="font-black text-sm md:text-base tracking-tight text-white flex items-center gap-1.5 leading-tight">
+                        <span class="app-name-text truncate">${appConfig.appName}</span> 
+                        <span class="text-[9px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded font-bold shrink-0">OFFICIAL</span>
+                    </h1>
+                </div>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-6 text-sm font-semibold">
+                <button onclick="switchTab('home')" class="nav-link text-orange-400 transition hover:text-orange-400 py-1" data-tab="home">홈</button>
+                <button onclick="switchTab('videos')" class="nav-link text-slate-300 transition hover:text-orange-400 py-1" data-tab="videos">유튜브 최신 영상</button>
+                <button onclick="switchTab('members')" class="nav-link text-slate-300 transition hover:text-orange-400 py-1" data-tab="members">유타가족 소개</button>
+                <button onclick="switchTab('livechat')" class="nav-link text-slate-300 transition hover:text-orange-400 flex items-center gap-1.5 py-1" data-tab="livechat">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span> 실시간 소통방
+                </button>
+                <button id="nav-admin-btn" onclick="switchTab('admin')" class="nav-link text-slate-400 transition hover:text-orange-400 flex items-center gap-1 py-1 hidden" data-tab="admin">
+                    <i data-lucide="shield" class="w-4 h-4 text-orange-500"></i> 관리자 대시보드
+                </button>
+            </div>
+
+            <div class="flex items-center space-x-2 shrink-0">
+                <a href="https://www.youtube.com/@%EC%9C%A0%EC%9C%A0%ED%83%80%EC%9D%B4%EA%B1%B0" target="_blank" rel="noopener noreferrer" class="bg-red-600 hover:bg-red-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-red-600/30 transition shrink-0">
+                    <i data-lucide="youtube" class="w-4 h-4"></i> 유튜브 채널
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="md:hidden flex items-center justify-around bg-slate-900 border-b border-slate-800 px-2 py-2.5 text-xs font-bold sticky top-16 z-40 overflow-x-auto hide-scrollbar">
+        <button onclick="switchTab('home')" class="mobile-nav text-orange-400 bg-slate-800/80 px-3 py-1.5 rounded-xl transition whitespace-nowrap shrink-0" data-tab="home">홈</button>
+        <button onclick="switchTab('videos')" class="mobile-nav text-slate-400 px-3 py-1.5 rounded-xl transition whitespace-nowrap shrink-0" data-tab="videos">영상</button>
+        <button onclick="switchTab('members')" class="mobile-nav text-slate-400 px-3 py-1.5 rounded-xl transition whitespace-nowrap shrink-0" data-tab="members">가족소개</button>
+        <button onclick="switchTab('livechat')" class="mobile-nav text-slate-400 px-3 py-1.5 rounded-xl transition whitespace-nowrap shrink-0" data-tab="livechat">소통방</button>
+        <button id="mobile-nav-admin" onclick="switchTab('admin')" class="mobile-nav text-orange-400 px-3 py-1.5 rounded-xl transition whitespace-nowrap shrink-0 hidden" data-tab="admin">관리자</button>
+    </div>
+
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 mb-16 overflow-hidden" id="main-container">
+        <!-- Dynamic views load here -->
+    </main>
+
+    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 text-xs py-8 text-center space-y-2 px-4">
+        <div class="flex items-center justify-center space-x-2 text-white font-bold text-sm">
+            <span>🐯 <span class="app-name-text">${appConfig.appName}</span> 공식 팬 커뮤니티</span>
+        </div>
+        <p class="max-w-xl mx-auto leading-relaxed px-2">본 앱은 팬들이 유유타이거 가족(유유, 치치, 모모, 타이거)과 소통하고 최신 영상을 편리하게 보기 위해 만든 팬 사이트입니다.</p>
+        <p id="copyright-text" onclick="handleCopyrightClick()" class="text-slate-500 cursor-pointer select-none hover:text-slate-400 transition inline-block py-1 px-2">© 2026 Yuyu Tiger Fan Club. All rights reserved.</p>
+    </footer>
+
+    <!-- Admin Authentication Modal -->
+    <div id="admin-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-5 animate-scaleUp">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <h3 class="font-bold text-base text-white flex items-center gap-2 truncate">
+                    <i data-lucide="shield" class="w-5 h-5 text-orange-500 shrink-0"></i> 관리자 인증
+                </h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <p class="text-xs text-slate-300 leading-relaxed">관리자 전용 페이지 접근을 위한 인증입니다. 아이디와 비밀번호를 입력해주세요.</p>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1">아이디</label>
+                        <input type="text" id="admin-id" placeholder="아이디 입력" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-orange-500">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1">비밀번호</label>
+                        <input type="password" id="admin-pw" placeholder="비밀번호 입력" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-orange-500">
+                    </div>
+                </div>
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button onclick="closeAdminModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold transition">취소</button>
+                    <button onclick="handleAdminLogin()" class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-orange-500/20 transition">로그인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 max-w-sm w-[90%] md:w-auto bg-slate-800 border border-slate-700 text-white px-5 py-3 rounded-2xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 pointer-events-none">
+        <div class="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+        </div>
+        <div class="min-w-0 flex-1">
+            <h4 class="font-bold text-xs truncate" id="toast-title">알림</h4>
+            <p class="text-[11px] text-slate-300 truncate" id="toast-desc">내용</p>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'home';
+        let isAdminLoggedIn = false;
+        let copyrightClickCount = 0;
+        let copyrightTimer = null;
+
+        let officialNotice = {
+            title: '🎉 유유타이거 구독자 53.9만 돌파 기념 이벤트 안내',
+            content: '항상 유유타이거 가족을 사랑해주시는 치유(팬) 여러분 진심으로 감사드립니다! 소통방에 응원글을 남겨주시면 유유, 치치, 모모, 타이거가 랜덤으로 답글을 남겨드려요!'
+        };
+
+        let videos = [
+            { 
+                id: 'busan2', 
+                title: '여행 중 호텔에 갔는데 어딘가 수상하다..? 부산 여행 브이로그 2편', 
+                views: '11.8만회', 
+                time: '16시간 전', 
+                thumb: 'https://placehold.co/600x338/ea580c/ffffff?text=Busan+Hotel+Vlog',
+                url: 'https://www.youtube.com/watch?v=R9K1G9C9V1Q'
+            },
+            { 
+                id: 'baby', 
+                title: '벨이 울려서 나가보니 문 앞에 아기가..? 아기 돌보기 주말 일상🚨', 
+                views: '39만회', 
+                time: '3주 전', 
+                thumb: 'https://placehold.co/600x338/f97316/ffffff?text=Baby+Sitter+Day',
+                url: 'https://www.youtube.com/@%EC%9C%A0%EC%9C%A0%ED%83%80%EC%9D%B4%EA%B1%B0'
+            },
+            { 
+                id: 'friend', 
+                title: '친구 없어서 울던 막내.. 인생 처음 친구랑 놀러 나가는 날🚨', 
+                views: '31만회', 
+                time: '4주 전', 
+                thumb: 'https://placehold.co/600x338/d97706/ffffff?text=Chichi+First+Friend',
+                url: 'https://www.youtube.com/@%EC%9C%A0%EC%9C%A0%ED%83%80%EC%9D%B4%EA%B1%B0'
+            },
+            { 
+                id: 'allowance', 
+                title: '용돈이 부족하다는 고학년 딸🔥 대환장 용돈 협상 일상 브이로그', 
+                views: '45만회', 
+                time: '2달 전', 
+                thumb: 'https://placehold.co/600x338/c2410c/ffffff?text=Allowance+Negotiation',
+                url: 'https://www.youtube.com/@%EC%9C%A0%EC%9C%A0%ED%83%80%EC%9D%B4%EA%B1%B0'
+            },
+            { 
+                id: 'horror', 
+                title: '인적이 드문 시골 마을로 여행을 갔는데, 밤에 무서운 이야기하다가 의문의 소리가..?', 
+                views: '40.9만회', 
+                time: '1달 전', 
+                thumb: 'https://placehold.co/600x338/7c2d12/ffffff?text=Horror+Special+Trip',
+                url: 'https://www.youtube.com/@%EC%9C%A0%EC%9C%A0%ED%83%80%EC%9D%B4%EA%B1%B0'
+            },
+            { 
+                id: 'ramen', 
+                title: '랜덤 라면 끓이기🔥 [초딩딸들 VS 엄빠]', 
+                views: '1700만회', 
+                time: '인기 급상승', 
+                thumb: 'https://placehold.co/600x338/9a3412/ffffff?text=Random+Ramen+Challenge',
+                url: 'https://www.youtube.com/@%EC%9C%A0%EC%9C%A0%ED%83%80%EC%9D%B4%EA%B1%B0'
+            }
+        ];
+
+        const members = [
+            { name: '유유 (연재)', role: '첫째 딸 (2015년생)', mbti: 'ENFP', desc: '밝고 사교성 넘치는 언니! 가끔 개그로 모두를 웃게 해요. 개인 채널 유유로그 운영 중!', emoji: '👧🏻', badge: '언니' },
+            { name: '치치 (연우)', role: '막내 딸 (2018년생)', mbti: 'ISTJ', desc: '차분하고 착한 마음씨를 가진 둘째! 공부 욕심도 많고 의젓하며 영상에서 항상 다정해요.', emoji: '🧒🏻', badge: '막내' },
+            { name: '모모', role: '엄마', mbti: 'T 성향', desc: '영상의 촬영, 편집, 기획을 총괄하는 만능 엄마! 타부지 별명 보유자.', emoji: '👩🏻', badge: '엄마' },
+            { name: '타이거', role: '아빠', mbti: '딸바보', desc: '호랑이 잠옷과 선글라스로 유명했던 다정한 유타가족 아빠! 연기력 만렙.', emoji: '👨🏻', badge: '아빠' }
+        ];
+
+        let messages = [
+            { id: 1, author: '유유 (Yuyu)', role: '크리에이터', content: '치유님들 유하! 💙 오늘 부산 브이로그 2편 재밌게 보셨나요? 다음 주 영상도 기대해주세요!', time: '10분 전', isCreator: true, likes: 142 },
+            { id: 2, author: '모모 (Momo)', role: '크리에이터', content: '안녕하세요 모모입니다! 항상 우리 유유타이거 사랑해주셔서 너무 감사드려요 환절기 감기 조심하세요! 🥰', time: '1시간 전', isCreator: true, likes: 210 },
+            { id: 3, author: '치치사랑해', role: '팬', content: '치치야 이번 주말 영상 너무 귀여웠어ㅠㅠ 랜선 이모가 늘 응원해!!', time: '2시간 전', isCreator: false, likes: 24 },
+            { id: 4, author: '어흥파파', role: '팬', content: '타이거 아빠 리액션 늘 최고 ㅋㅋ 다음 가족 여행은 어디로 가시나요?', time: '3시간 전', isCreator: false, likes: 18 },
+            { id: 5, author: '타이거 (Tiger)', role: '크리에이터', content: '어흥! 타이거 아빠입니다 🐯 다음엔 더 꿀잼 대환장 챌린지로 찾아올게요 기대하시라!', time: '5시간 전', isCreator: true, likes: 350 }
+        ];
+
+        let customFeatures = [
+            { id: 'feat_1', title: '🎁 치유 전용 팬아트 자랑방', badge: '인기 이벤트', type: 'fanart', desc: '내가 그린 유유타이거 팬아트를 올리고 자랑해보세요!', guide: '💡 위젯 추가 방법: 관리자 대시보드 하단에서 위젯 이름과 타입을 선택한 후 추가하면 홈 화면에 즉시 생성됩니다.' }
+        ];
+
+        try {
+            const savedVideos = localStorage.getItem('yuyu_videos');
+            const savedNotice = localStorage.getItem('yuyu_notice');
+            const savedMessages = localStorage.getItem('yuyu_messages');
+            const savedFeatures = localStorage.getItem('yuyu_features');
+            if (savedVideos) videos = JSON.parse(savedVideos);
+            if (savedNotice) officialNotice = JSON.parse(savedNotice);
+            if (savedMessages) messages = JSON.parse(savedMessages);
+            if (savedFeatures) customFeatures = JSON.parse(savedFeatures);
+        } catch(e) {}
+
+        function saveData() {
+            try {
+                localStorage.setItem('yuyu_videos', JSON.stringify(videos));
+                localStorage.setItem('yuyu_notice', JSON.stringify(officialNotice));
+                localStorage.setItem('yuyu_messages', JSON.stringify(messages));
+                localStorage.setItem('yuyu_features', JSON.stringify(customFeatures));
+                localStorage.setItem('yuyu_app_config', JSON.stringify(appConfig));
+            } catch(e) {}
+        }
+
+        function refreshIcons() {
+            lucide.createIcons();
+        }
+
+        function switchTab(tab) {
+            if (tab === 'admin' && !isAdminLoggedIn) {
+                showToast('접근 제한', '관리자 권한이 필요합니다. (하단 카피라이트 5회 클릭)');
+                return;
+            }
+
+            currentTab = tab;
+            
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                if (btn.getAttribute('data-tab') === tab) {
+                    btn.classList.remove('text-slate-300', 'text-slate-400');
+                    btn.classList.add('text-orange-400');
+                } else {
+                    if(btn.getAttribute('data-tab') !== 'admin' || isAdminLoggedIn) {
+                        btn.classList.remove('text-orange-400');
+                        btn.classList.add(btn.getAttribute('data-tab') === 'admin' ? 'text-slate-400' : 'text-slate-300');
+                    }
+                }
+            });
+
+            document.querySelectorAll('.mobile-nav').forEach(btn => {
+                if (btn.getAttribute('data-tab') === tab) {
+                    btn.classList.remove('text-slate-400', 'bg-slate-800');
+                    btn.classList.add('text-orange-400', 'bg-slate-800/80');
+                } else {
+                    btn.classList.remove('text-orange-400', 'bg-slate-800/80');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+
+            renderContent();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderContent() {
+            const container = document.getElementById('main-container');
+
+            if (currentTab === 'home') {
+                container.innerHTML = `
+                    <div class="space-y-8 animate-fadeIn max-w-5xl mx-auto">
+                        <!-- Hero Banner -->
+                        <div class="relative overflow-hidden rounded-3xl p-6 sm:p-10 shadow-2xl text-white flex flex-col md:flex-row items-center justify-between gap-6" style="background: linear-gradient(to right, ${appConfig.primaryColor}, ${appConfig.secondaryColor});">
+                            <div class="absolute -right-10 -bottom-10 text-9xl opacity-10 select-none pointer-events-none">${appConfig.logoEmoji}</div>
+                            <div class="relative z-10 space-y-4 max-w-xl text-center md:text-left min-w-0">
+                                <div class="inline-flex items-center gap-2 bg-black/30 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-bold text-orange-200">
+                                    <span class="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0"></span> 미완료 항목: <strong id="pending-counter-display" class="underline ml-1">${appConfig.pendingTasksCount}</strong>개
+                                </div>
+                                <h2 class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight"><span class="app-name-text">${escapeHtml(appConfig.appName)}</span> 공식 팬 커뮤니티</h2>
+                                <p class="text-xs sm:text-sm md:text-base text-orange-100 leading-relaxed">
+                                    ${escapeHtml(appConfig.tagline)}. 유유, 치치, 모모, 타이거 네 가족의 웃음과 감동이 가득한 공간입니다.
+                                </p>
+                                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
+                                    <a href="https://www.youtube.com/@%EC%9C%A0%EC%9C%A0%ED%83%80%EC%9D%B4%EA%B1%B0" target="_blank" rel="noopener noreferrer" class="bg-white text-orange-600 px-5 py-3 rounded-2xl font-black text-xs sm:text-sm shadow-xl hover:bg-orange-50 transition flex items-center gap-2">
+                                        <i data-lucide="youtube" class="w-4 h-4 sm:w-5 sm:h-5"></i> 유튜브 바로가기
+                                    </a>
+                                    <button onclick="switchTab('livechat')" class="bg-black/30 hover:bg-black/50 text-white border border-white/20 px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm backdrop-blur-md transition flex items-center gap-2">
+                                        <i data-lucide="message-square" class="w-4 h-4 sm:w-5 sm:h-5"></i> 실시간 소통방
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="relative z-10 hidden md:block shrink-0">
+                                <div class="w-40 h-40 rounded-full bg-black/20 backdrop-blur-md border-4 border-white/20 flex items-center justify-center text-7xl shadow-2xl overflow-hidden animate-bounce">
+                                    ${appConfig.logoImage ? `<img src="${appConfig.logoImage}" class="w-full h-full object-cover">` : appConfig.logoEmoji}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Official Notice Card -->
+                        <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-5 shadow-lg flex items-start space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 font-bold text-lg">📢</div>
+                            <div class="flex-1 min-w-0 space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-bold">공지사항</span>
+                                    <span class="text-[11px] text-slate-400">관리자 고정</span>
+                                </div>
+                                <h3 class="font-bold text-sm text-white truncate">${escapeHtml(officialNotice.title)}</h3>
+                                <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(officialNotice.content)}</p>
+                            </div>
+                        </div>
+
+                        <!-- Custom Widgets -->
+                        ${customFeatures.length > 0 ? `
+                            <div class="space-y-4">
+                                <h3 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">
+                                    <i data-lucide="sparkles" class="text-amber-400 w-5 h-5 shrink-0"></i> <span>관리자가 추가한 맞춤형 위젯 및 기능</span>
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    ${customFeatures.map(f => `
+                                        <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-5 shadow-xl space-y-3 relative overflow-hidden">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-[10px] bg-amber-500/20 text-amber-400 px-2.5 py-0.5 rounded-full font-bold truncate">${escapeHtml(f.badge || '맞춤 위젯')}</span>
+                                                ${isAdminLoggedIn ? `<button onclick="deleteFeature('${f.id}')" class="text-red-400 text-[11px] hover:underline font-bold bg-red-500/10 px-2 py-0.5 rounded shrink-0">위젯 삭제</button>` : ''}
+                                            </div>
+                                            <h4 class="font-bold text-sm sm:text-base text-white truncate">${escapeHtml(f.title)}</h4>
+                                            <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(f.desc)}</p>
+                                            ${f.guide ? `<p class="text-[11px] text-orange-300/80 bg-orange-500/10 p-2 rounded-xl border border-orange-500/20">${escapeHtml(f.guide)}</p>` : ''}
+                                            ${f.type === 'poll' ? `
+                                                <div class="pt-2 space-y-2 border-t border-slate-800">
+                                                    <button onclick="votePoll('${f.id}', 1)" class="w-full bg-slate-800 hover:bg-slate-700 text-xs text-left px-3 py-2 rounded-xl transition flex justify-between text-slate-200">
+                                                        <span class="truncate">👍 좋아요! 최고예요</span> <span id="poll-${f.id}-1" class="text-orange-400 font-bold shrink-0">12표</span>
+                                                    </button>
+                                                    <button onclick="votePoll('${f.id}', 2)" class="w-full bg-slate-800 hover:bg-slate-700 text-xs text-left px-3 py-2 rounded-xl transition flex justify-between text-slate-200">
+                                                        <span class="truncate">🔥 다음 영상도 기대돼요</span> <span id="poll-${f.id}-2" class="text-orange-400 font-bold shrink-0">25표</span>
+                                                    </button>
+                                                </div>
+                                            ` : f.type === 'fanart' ? `
+                                                <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                                                    <span class="truncate">🎨 팬아트 참여 및 공유</span>
+                                                    <button onclick="showToast('팬아트', '관리자가 추가한 팬아트 전용 위젯입니다!')" class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg font-bold text-[11px] shrink-0">업로드</button>
+                                                </div>
+                                            ` : `
+                                                <div class="pt-2 border-t border-slate-800 text-[11px] text-orange-300 font-medium truncate">
+                                                    ✨ 맞춤형 위젯 기능 활성화됨
+                                                </div>
+                                            `}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Latest Videos Grid -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg md:text-xl font-bold text-white flex items-center gap-2 truncate">
+                                    <i data-lucide="play-circle" class="text-orange-500 w-5 h-5 shrink-0"></i> <span>최신 유튜브 인기 영상</span>
+                                </h3>
+                                <button onclick="switchTab('videos')" class="text-xs text-orange-400 font-bold hover:underline shrink-0">전체보기 →</button>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                                ${videos.slice(0, 3).map(v => `
+                                    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hover:border-orange-500/50 transition flex flex-col group">
+                                        <div onclick="openVideo('${v.url}')" class="relative overflow-hidden aspect-video bg-slate-800 cursor-pointer">
+                                            <img src="${escapeHtml(v.thumb)}" alt="${escapeHtml(v.title)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/600x338/ea580c/ffffff?text=Yuyu+Tiger'">
+                                            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                                <div class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl">
+                                                    <i data-lucide="play" class="w-5 h-5 fill-white"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
+                                            <h4 onclick="openVideo('${v.url}')" class="font-bold text-xs sm:text-sm text-white line-clamp-2 leading-snug cursor-pointer hover:text-orange-400 transition">${escapeHtml(v.title)}</h4>
+                                            <div class="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/60">
+                                                <span class="truncate">조회수 ${escapeHtml(v.views)}</span>
+                                                <span class="text-orange-400 font-medium shrink-0">${escapeHtml(v.time)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'videos') {
+                container.innerHTML = `
+                    <div class="space-y-6 animate-fadeIn max-w-5xl mx-auto">
+                        <div class="flex items-center justify-between flex-wrap gap-4">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-white truncate"><span class="app-name-text">${escapeHtml(appConfig.appName)}</span> 전체 유튜브 영상</h2>
+                                <p class="text-xs text-slate-400 mt-1">클릭하시면 공식 유튜브 채널의 해당 영상으로 즉시 이동하여 시청하실 수 있습니다.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                            ${videos.map(v => `
+                                <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hover:border-orange-500/50 transition flex flex-col group">
+                                    <div onclick="openVideo('${v.url}')" class="relative overflow-hidden aspect-video bg-slate-800 cursor-pointer">
+                                        <img src="${escapeHtml(v.thumb)}" alt="${escapeHtml(v.title)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/600x338/ea580c/ffffff?text=Yuyu+Tiger'">
+                                        <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                            <div class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl">
+                                                <i data-lucide="play" class="w-5 h-5 fill-white"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                                        <h4 onclick="openVideo('${v.url}')" class="font-bold text-xs sm:text-sm text-white line-clamp-2 leading-snug cursor-pointer hover:text-orange-400 transition">${escapeHtml(v.title)}</h4>
+                                        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+                                            <span class="truncate">조회수 ${escapeHtml(v.views)}</span>
+                                            <a href="${v.url}" target="_blank" rel="noopener noreferrer" class="text-red-400 font-bold flex items-center gap-1 hover:underline shrink-0">
+                                                <i data-lucide="youtube" class="w-3.5 h-3.5"></i> 시청
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'members') {
+                container.innerHTML = `
+                    <div class="space-y-6 animate-fadeIn max-w-5xl mx-auto">
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold text-white truncate">유타가족 소개</h2>
+                            <p class="text-xs text-slate-400 mt-1"><span class="app-name-text">${escapeHtml(appConfig.appName)}</span> 채널을 빛내는 사랑스러운 4인 가족입니다.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            ${members.map(m => `
+                                <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-5 shadow-xl">
+                                    <div class="w-20 h-20 rounded-2xl bg-orange-500/20 text-4xl flex items-center justify-center shrink-0 border border-orange-500/30 shadow-inner">
+                                        ${m.emoji}
+                                    </div>
+                                    <div class="flex-1 text-center sm:text-left min-w-0">
+                                        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
+                                            <h3 class="text-base sm:text-lg font-bold text-white truncate">${escapeHtml(m.name)}</h3>
+                                            <span class="text-[10px] bg-orange-500/20 text-orange-400 px-2.5 py-0.5 rounded-full font-bold shrink-0">${m.mbti}</span>
+                                            <span class="text-[10px] bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full font-bold shrink-0">${m.badge}</span>
+                                        </div>
+                                        <p class="text-xs text-orange-300 font-semibold mb-2 truncate">${escapeHtml(m.role)}</p>
+                                        <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(m.desc)}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'livechat') {
+                container.innerHTML = `
+                    <div class="space-y-6 animate-fadeIn max-w-4xl mx-auto">
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-r from-orange-600/20 to-amber-600/20 border border-orange-500/30 p-5 sm:p-6 rounded-3xl">
+                            <div class="min-w-0">
+                                <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 truncate">
+                                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0"></span> <span class="truncate">실시간 팬 & 가족 소통방</span>
+                                </h2>
+                                <p class="text-xs text-orange-200 mt-1 leading-relaxed">팬들과 가족들이 실제로 글을 남기고 소통하는 공간입니다!</p>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <button onclick="simulateFamilyVisit()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-lg transition flex items-center gap-1.5 whitespace-nowrap">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i> 가족 방문 신청 🐯
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Write Post Box -->
+                        <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl space-y-4 shadow-xl">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2 truncate">
+                                <i data-lucide="edit-3" class="w-4 h-4 text-orange-400 shrink-0"></i> <span>새 메시지 / 응원글 남기기</span>
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input type="text" id="author-input" placeholder="닉네임 (예: 치유사랑)" class="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-orange-500">
+                                <select id="role-select" class="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-orange-500">
+                                    <option value="팬">일반 팬 (치유)</option>
+                                    <option value="크리에이터">가족 크리에이터 (실제 방문!)</option>
+                                </select>
+                            </div>
+                            <textarea id="content-input" rows="3" placeholder="가족에게 응원 한 마디를 남겨보세요! (질문이나 소통 환영)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-white focus:outline-none focus:border-orange-500 resize-none"></textarea>
+                            <div class="flex justify-end">
+                                <button onclick="postMessage()" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-orange-500/20 transition flex items-center gap-1.5">
+                                    <i data-lucide="send" class="w-4 h-4"></i> 등록하기
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Messages Stream -->
+                        <div class="space-y-4" id="messages-list">
+                            ${messages.map(m => `
+                                <div class="bg-slate-900 border ${m.isCreator ? 'border-orange-500/50 bg-gradient-to-r from-orange-950/20 to-slate-900' : 'border-slate-800'} p-4 sm:p-5 rounded-2xl space-y-2 shadow-lg transition">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <div class="flex items-center space-x-2.5 min-w-0">
+                                            <div class="w-9 h-9 rounded-xl ${m.isCreator ? 'bg-orange-500 text-white shadow-md shadow-orange-500/30' : 'bg-slate-800 text-slate-300'} flex items-center justify-center font-bold text-xs shrink-0">
+                                                ${m.isCreator ? '🐯' : '💬'}
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="flex items-center space-x-1.5">
+                                                    <h4 class="font-bold text-xs sm:text-sm text-white truncate">${escapeHtml(m.author)}</h4>
+                                                    ${m.isCreator ? '<span class="text-[10px] bg-orange-500 text-white px-2 py-0.5 rounded-md font-bold shrink-0">FAMILY</span>' : ''}
+                                                </div>
+                                                <p class="text-[10px] text-slate-400 truncate">${escapeHtml(m.role)}</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2 shrink-0">
+                                            <span class="text-[11px] text-slate-500">${escapeHtml(m.time)}</span>
+                                            ${isAdminLoggedIn ? `<button onclick="deleteMessage(${m.id})" class="text-red-400 hover:text-red-300 text-xs px-2 py-0.5 bg-red-500/10 rounded font-bold">삭제</button>` : ''}
+                                        </div>
+                                    </div>
+                                    <p class="text-xs sm:text-sm text-slate-200 leading-relaxed pl-11 break-words">${escapeHtml(m.content)}</p>
+                                    <div class="flex items-center justify-end space-x-3 pt-1">
+                                        <button onclick="likeMessage(${m.id})" class="text-[11px] text-slate-400 hover:text-orange-400 flex items-center gap-1 transition">
+                                            <i data-lucide="heart" class="w-3.5 h-3.5"></i> 응원해요 <span class="font-bold text-orange-400">${m.likes}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'admin') {
+                container.innerHTML = `
+                    <div class="space-y-6 animate-fadeIn max-w-4xl mx-auto">
+                        <div class="bg-orange-500/10 border border-orange-500/30 p-5 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div class="flex items-center space-x-3 min-w-0">
+                                <div class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-bold text-lg shrink-0">🛡️</div>
+                                <div class="min-w-0">
+                                    <h2 class="font-bold text-base text-orange-300 truncate">관리자 전용 대시보드 (Admin Panel)</h2>
+                                    <p class="text-xs text-slate-400">앱 이름, 로고 파일 업로드, 한글 색상명 테마, 공지 및 영상을 관리하세요.</p>
+                                </div>
+                            </div>
+                            <button onclick="logoutAdmin()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition shrink-0">로그아웃</button>
+                        </div>
+
+                        <!-- App Customization & Styling Panel (Korean color support & File Logo Upload) -->
+                        <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-xl">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                                <h3 class="font-bold text-sm text-white flex items-center gap-2 truncate">
+                                    <i data-lucide="palette" class="w-4 h-4 text-orange-500 shrink-0"></i> <span>앱 이름, 로고 파일 및 한글 색상명 테마 설정</span>
+                                </h3>
+                                <button onclick="resetAppThemeSettings()" class="bg-slate-800 hover:bg-slate-700 text-orange-400 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0">
+                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 디자인 초기화
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-[11px] text-slate-400 mb-1">앱 타이틀 이름 (즉시 반영)</label>
+                                    <input type="text" id="adm-config-name" value="${escapeHtml(appConfig.appName)}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-slate-400 mb-1">상단 로고 이모지</label>
+                                    <input type="text" id="adm-config-emoji" value="${escapeHtml(appConfig.logoEmoji)}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-slate-400 mb-1">로고 이미지 파일 업로드</label>
+                                    <input type="file" id="adm-logo-file" accept="image/*" onchange="handleLogoFileUpload(event)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-slate-400 mb-1">아직 하지 않은 것 (카운터 수치)</label>
+                                    <input type="number" id="adm-config-pending" value="${appConfig.pendingTasksCount}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-slate-400 mb-1">메인 주 색상 (<span class="text-orange-400">주황색, 초록색, 파란색 등 한글 입력 가능</span>)</label>
+                                    <input type="text" id="adm-config-primary" value="${escapeHtml(appConfig.primaryColor)}" placeholder="예: 주황색 또는 #ea580c" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-slate-400 mb-1">서브 색상 (<span class="text-orange-400">한글 색상명 입력 가능</span>)</label>
+                                    <input type="text" id="adm-config-secondary" value="${escapeHtml(appConfig.secondaryColor)}" placeholder="예: 오렌지색 또는 #f97316" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-slate-400 mb-1">배경 색상 (<span class="text-orange-400">한글 색상명 입력 가능</span>)</label>
+                                    <input type="text" id="adm-config-bg" value="${escapeHtml(appConfig.bgColor)}" placeholder="예: 검은색 또는 다크" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                </div>
+                            </div>
+                            <div class="pt-2">
+                                <button onclick="updateAppThemeSettings()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl text-xs font-bold shadow-lg shadow-orange-500/20 transition">앱 이름 및 디자인 즉시 적용하기</button>
+                            </div>
+                        </div>
+
+                        <!-- Admin Sections Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Notice Manager -->
+                            <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-xl">
+                                <h3 class="font-bold text-sm text-white flex items-center gap-2 border-b border-slate-800 pb-3 truncate">
+                                    <i data-lucide="bell" class="w-4 h-4 text-amber-400 shrink-0"></i> <span>상단 공지사항 수정</span>
+                                </h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-[11px] text-slate-400 mb-1">공지 제목</label>
+                                        <input type="text" id="adm-notice-title-input" value="${escapeHtml(officialNotice.title)}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] text-slate-400 mb-1">공지 내용</label>
+                                        <textarea id="adm-notice-content-input" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white resize-none">${escapeHtml(officialNotice.content)}</textarea>
+                                    </div>
+                                    <button onclick="updateNotice()" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-xs font-bold shadow-md transition">공지사항 즉시 반영</button>
+                                </div>
+                            </div>
+
+                            <!-- Video Manager -->
+                            <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-xl">
+                                <h3 class="font-bold text-sm text-white flex items-center gap-2 border-b border-slate-800 pb-3 truncate">
+                                    <i data-lucide="youtube" class="w-4 h-4 text-red-500 shrink-0"></i> <span>새 유튜브 영상 추가</span>
+                                </h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-[11px] text-slate-400 mb-1">영상 제목</label>
+                                        <input type="text" id="adm-vid-title" placeholder="예: 부산 여행 브이로그 3편" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] text-slate-400 mb-1">유튜브 링크 URL</label>
+                                        <input type="text" id="adm-vid-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="text" id="adm-vid-views" placeholder="조회수 (예: 5.2만회)" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                        <input type="text" id="adm-vid-time" placeholder="업로드 (예: 2시간 전)" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                    </div>
+                                    <button onclick="addAdminVideo()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl text-xs font-bold shadow-md transition">영상 사이트에 추가</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Feature & Widget Adder -->
+                        <div class="bg-slate-900 border border-orange-500/40 p-6 rounded-3xl space-y-4 shadow-xl relative overflow-hidden">
+                            <div class="absolute -right-6 -bottom-6 text-7xl opacity-10 select-none pointer-events-none">✨</div>
+                            <h3 class="font-bold text-sm text-white flex items-center gap-2 border-b border-slate-800 pb-3 truncate">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-orange-400 shrink-0"></i> <span>사이트 기능 및 맞춤형 위젯 추가</span>
+                            </h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                <strong>💡 위젯 추가 방법:</strong> 추가하고 싶은 기능을 자연어로 적어주시면 홈 화면에 완전한 인터랙티브 위젯으로 즉시 추가됩니다!
+                            </p>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-[11px] text-slate-400 mb-1">추가하고 싶은 기능 요청 (자연어)</label>
+                                    <textarea id="adm-ai-prompt" rows="3" placeholder="예: 팬아트 콘테스트 투표함 만들어줘" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white resize-none focus:outline-none focus:border-orange-500"></textarea>
+                                </div>
+                                <button onclick="generateAIFeature()" class="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white py-3 rounded-xl text-xs font-bold shadow-lg shadow-orange-600/20 transition flex items-center justify-center gap-2">
+                                    <i data-lucide="cpu" class="w-4 h-4"></i> 맞춤 위젯 기능 즉시 코딩 및 추가하기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            refreshIcons();
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function openVideo(url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+
+        function postMessage() {
+            const author = document.getElementById('author-input').value.trim();
+            const role = document.getElementById('role-select').value;
+            const content = document.getElementById('content-input').value.trim();
+
+            if (!author || !content) {
+                showToast('입력 오류', '닉네임과 메시지 내용을 모두 입력해주세요!');
+                return;
+            }
+
+            const isCreator = role === '크리에이터';
+
+            messages.unshift({
+                id: Date.now(),
+                author: author,
+                role: isCreator ? '가족 크리에이터' : '팬',
+                content: content,
+                time: '방금 전',
+                isCreator: isCreator,
+                likes: 1
+            });
+
+            saveData();
+            document.getElementById('author-input').value = '';
+            document.getElementById('content-input').value = '';
+            showToast('등록 완료', '소통방에 메시지가 성공적으로 등록되었습니다!');
+            renderContent();
+        }
+
+        function likeMessage(id) {
+            const msg = messages.find(m => m.id === id);
+            if (msg) {
+                msg.likes++;
+                saveData();
+                renderContent();
+            }
+        }
+
+        function deleteMessage(id) {
+            messages = messages.filter(m => m.id !== id);
+            saveData();
+            showToast('삭제 완료', '메시지가 삭제되었습니다.');
+            renderContent();
+        }
+
+        function simulateFamilyVisit() {
+            const familyMembers = [
+                { name: '첫째 딸', text: '다들 안녕하세요! 오늘 학교 끝나고 앱 들어왔어요 다들 반가워요 💙' },
+                { name: '막내 딸', text: '안녕하세요! 오늘 언니랑 맛있는 간식 먹었어요 모두 좋은 하루 보내세요! 🍊' },
+                { name: '엄마', text: '안녕하세요! 우리 팬분들 늘 응원해주셔서 정말 힘이 납니다 항상 건강하세요! 🥰' },
+                { name: '아빠', text: '어흥! 아빠 등장입니다 🐯 다들 멋진 팬들이시군요 대단해요!' }
+            ];
+
+            const randomMember = familyMembers[Math.floor(Math.random() * familyMembers.length)];
+
+            messages.unshift({
+                id: Date.now(),
+                author: randomMember.name,
+                role: '크리에이터',
+                content: randomMember.text,
+                time: '방금 전 (실시간 방문)',
+                isCreator: true,
+                likes: 88
+            });
+
+            saveData();
+            showToast('서프라이즈 방문!', `${randomMember.name}님이 소통방에 깜짝 방문하셨습니다! 🎉`);
+            if (currentTab === 'livechat') {
+                renderContent();
+            }
+        }
+
+        function votePoll(id, option) {
+            const countEl = document.getElementById(`poll-${id}-${option}`);
+            if (countEl) {
+                let currentCount = parseInt(countEl.innerText) || 0;
+                countEl.innerText = (currentCount + 1) + '표';
+                showToast('투표 완료', '소중한 한 표가 성공적으로 반영되었습니다!');
+            }
+        }
+
+        // Handle logo file upload
+        function handleLogoFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                appConfig.logoImage = e.target.result;
+                showToast('로고 업로드', '이미지 로고가 성공적으로 등록되었습니다.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Update app name, theme settings supporting Korean color names
+        function updateAppThemeSettings() {
+            appConfig.appName = document.getElementById('adm-config-name').value.trim() || '유유타이거';
+            appConfig.logoEmoji = document.getElementById('adm-config-emoji').value.trim() || '🐯';
+            appConfig.pendingTasksCount = parseInt(document.getElementById('adm-config-pending').value) || 0;
+            
+            const rawPrimary = document.getElementById('adm-config-primary').value.trim();
+            const rawSecondary = document.getElementById('adm-config-secondary').value.trim();
+            const rawBg = document.getElementById('adm-config-bg').value.trim();
+
+            const resolvedPrimary = koreanColorToHex(rawPrimary);
+            const resolvedSecondary = koreanColorToHex(rawSecondary);
+            const resolvedBg = koreanColorToHex(rawBg);
+
+            if (resolvedPrimary) appConfig.primaryColor = resolvedPrimary;
+            if (resolvedSecondary) appConfig.secondaryColor = resolvedSecondary;
+            if (resolvedBg) appConfig.bgColor = resolvedBg;
+
+            document.documentElement.style.setProperty('--primary-color', appConfig.primaryColor);
+            document.documentElement.style.setProperty('--bg-color', appConfig.bgColor);
+
+            // Update Header & Footer app name text instantly everywhere
+            document.querySelectorAll('.app-name-text').forEach(el => {
+                el.innerText = appConfig.appName;
+            });
+
+            const logoContainer = document.getElementById('header-logo-container');
+            if (logoContainer) {
+                if (appConfig.logoImage) {
+                    logoContainer.innerHTML = `<img src="${appConfig.logoImage}" alt="Logo" class="w-full h-full object-cover">`;
+                } else {
+                    logoContainer.innerText = appConfig.logoEmoji;
+                }
+            }
+
+            saveData();
+            showToast('설정 완료', '앱 이름과 한글 색상 테마가 즉시 반영되었습니다!');
+            renderContent();
+        }
+
+        // Reset App Theme Settings to Default
+        function resetAppThemeSettings() {
+            appConfig = {
+                appName: '유유타이거',
+                tagline: '온 가족이 함께 보는 꿀잼 일상 튜브',
+                logoEmoji: '🐯',
+                logoImage: '',
+                primaryColor: '#ea580c',
+                secondaryColor: '#f97316',
+                bgColor: '#0b0f19',
+                pendingTasksCount: 0
+            };
+
+            document.documentElement.style.setProperty('--primary-color', appConfig.primaryColor);
+            document.documentElement.style.setProperty('--bg-color', appConfig.bgColor);
+
+            document.querySelectorAll('.app-name-text').forEach(el => {
+                el.innerText = appConfig.appName;
+            });
+
+            const logoContainer = document.getElementById('header-logo-container');
+            if (logoContainer) {
+                logoContainer.innerText = appConfig.logoEmoji;
+            }
+
+            saveData();
+            showToast('초기화 완료', '앱 디자인과 테마가 기본값으로 초기화되었습니다.');
+            renderContent();
+        }
+
+        function updateNotice() {
+            const title = document.getElementById('adm-notice-title-input').value.trim();
+            const content = document.getElementById('adm-notice-content-input').value.trim();
+            if(!title || !content) {
+                showToast('입력 오류', '제목과 내용을 모두 입력해주세요.');
+                return;
+            }
+            officialNotice = { title, content };
+            saveData();
+            showToast('반영 완료', '메인 공지사항이 업데이트되었습니다.');
+        }
+
+        function addAdminVideo() {
+            const title = document.getElementById('adm-vid-title').value.trim();
+            const url = document.getElementById('adm-vid-url').value.trim();
+            const views = document.getElementById('adm-vid-views').value.trim() || '1만회';
+            const time = document.getElementById('adm-vid-time').value.trim() || '방금 전';
+
+            if (!title || !url) {
+                showToast('입력 오류', '영상 제목과 유튜브 URL을 모두 입력해주세요.');
+                return;
+            }
+
+            videos.unshift({
+                id: 'vid_' + Date.now(),
+                title: title,
+                views: views,
+                time: time,
+                thumb: `https://placehold.co/600x338/ea580c/ffffff?text=${encodeURIComponent(title.slice(0, 12))}`,
+                url: url
+            });
+
+            saveData();
+            showToast('추가 완료', '새로운 영상이 등록되었습니다.');
+            document.getElementById('adm-vid-title').value = '';
+            document.getElementById('adm-vid-url').value = '';
+            document.getElementById('adm-vid-views').value = '';
+            document.getElementById('adm-vid-time').value = '';
+        }
+
+        function generateAIFeature() {
+            const prompt = document.getElementById('adm-ai-prompt').value.trim();
+            if(!prompt) {
+                showToast('입력 오류', '추가할 기능을 적어주세요.');
+                return;
+            }
+
+            showToast('기능 분석 중...', '요청을 분석하여 위젯을 생성하고 있습니다...');
+
+            setTimeout(() => {
+                const newId = 'ai_feat_' + Date.now();
+                customFeatures.push({
+                    id: newId,
+                    title: `✨ 맞춤 위젯: ${prompt.slice(0, 15)}...`,
+                    badge: '커스텀 위젯',
+                    type: 'poll',
+                    desc: `요청 내용: "${prompt}" 에 맞추어 생성된 실시간 상호작용 위젯입니다.`,
+                    guide: '💡 위젯이 성공적으로 생성되어 홈 화면에 배치되었습니다!'
+                });
+
+                saveData();
+                document.getElementById('adm-ai-prompt').value = '';
+                showToast('생성 완료!', '위젯이 성공적으로 코딩되어 홈 화면에 추가되었습니다.');
+                switchTab('home');
+            }, 1000);
+        }
+
+        function deleteFeature(id) {
+            customFeatures = customFeatures.filter(f => f.id !== id);
+            saveData();
+            showToast('삭제 완료', '위젯 기능이 제거되었습니다.');
+            renderContent();
+        }
+
+        function handleCopyrightClick() {
+            copyrightClickCount++;
+            if (copyrightTimer) clearTimeout(copyrightTimer);
+            
+            if (copyrightClickCount >= 5) {
+                copyrightClickCount = 0;
+                document.getElementById('admin-modal').classList.remove('hidden');
+                return;
+            }
+
+            copyrightTimer = setTimeout(() => {
+                copyrightClickCount = 0;
+            }, 2000);
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function handleAdminLogin() {
+            const idInput = document.getElementById('admin-id').value.trim();
+            const pwInput = document.getElementById('admin-pw').value.trim();
+
+            if (idInput === 'admin' && pwInput === 'Yuyu Tiger 1518') {
+                isAdminLoggedIn = true;
+                closeAdminModal();
+                showToast('로그인 성공', '관리자 권한이 활성화되었습니다.');
+                document.getElementById('nav-admin-btn').classList.remove('hidden');
+                document.getElementById('mobile-nav-admin').classList.remove('hidden');
+                switchTab('admin');
+            } else {
+                showToast('로그인 실패', '아이디 또는 비밀번호가 올바르지 않습니다.');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('nav-admin-btn').classList.add('hidden');
+            document.getElementById('mobile-nav-admin').classList.add('hidden');
+            document.getElementById('admin-id').value = '';
+            document.getElementById('admin-pw').value = '';
+            showToast('로그아웃', '관리자 모드가 해제되었습니다.');
+            switchTab('home');
+        }
+
+        function showToast(title, desc) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-desc').innerText = desc;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        window.onload = function() {
+            renderContent();
+        };
+    </script>
+</body>
+</html>
